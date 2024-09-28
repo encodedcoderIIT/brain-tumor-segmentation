@@ -1,4 +1,4 @@
-# Tumor Detection Using Deep Learning Techniques
+# Brain Tumor Segmentation using the BraTS Dataset
 
 ## Problem Statement:
 
