@@ -1,10 +1,12 @@
 # Brain Tumor Segmentation using the BraTS Dataset
 
-## Problem Statement:
+## Objectives:
 
-- Development of a machine learning pipeline that includes feature extraction, model training, and validation.
-- Examining the recent survey papers to come up with the latest approaches being used for tumor identification
-- Integration of the model into a user-friendly application that can be further utilized in clinical settings.
+- *Data Scientist*: Exploring the publicly available brain tumor data and deep learning models that generalize well for tumor segmentation. Focusing on the development of a deep learning model for the segmentation of brain tumors using the BraTS dataset to support clinical decision making.
+- *Data Engineer*: To analyse the dataset received from data scientist
+- *Machine Learning Engineer*: To develop a segmentation model which generalizes well on unseen data.
+- *Backed Engineer*: Creating a WebApp, Integrating the ML model with front end application. Deploy the application on AWS (Resources dependent). Creating an entire backend ecosystem to use the WebApp.
+
 
 ## Team members and their roles:
 
@@ -16,9 +18,10 @@
 
 ## Expected Results:
 
-- Classification of types of tumor on segmented images
+- Web application to support clinical decision making by providing the segmentation model for brain tumors.
 
 ## References:
 
-- Dequidt, P., Bourdon, P., Tremblais, B., Guillevin, C., Gianelli, B., Boutet, C., Cottier, J. P., Vallée, J. N., Fernandez-Maloigne, C., & Guillevin, R. (2021). Exploring Radiologic Criteria for Glioma Grade Classification on the BraTS Dataset. IRBM, 42(6), 407–414. https://doi.org/10.1016/j.irbm.2021.04.003
-- Anantharajan, S., Gunasekaran, S., Subramanian, T., & R, V. (2024). MRI brain tumor detection using deep learning and machine learning approaches. Measurement Sensors, 31, 101026. https://doi.org/10.1016/j.measen.2024.101026
+- De Verdier, Maria C., et al. "The 2024 Brain Tumor Segmentation (BraTS) Challenge: Glioma Segmentation on Post-treatment MRI." ArXiv, 2024, /abs/2405.18368.
+- Zeineldin, Ramy A., et al. "Multimodal CNN networks for brain tumor segmentation in MRI: a BraTS 2022 challenge solution." International MICCAI Brainlesion Workshop. Cham: Springer Nature Switzerland, 2022.
+- Nguyen-Tat, Thien B., et al. "Enhancing brain tumor segmentation in MRI images: A hybrid approach using UNet, attention mechanisms, and transformers." Egyptian Informatics Journal 27 (2024): 100528.
