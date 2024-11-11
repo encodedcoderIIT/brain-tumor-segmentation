@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Brain Tumor Segmentation</title>
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link href="/static/css/styles.css" rel="stylesheet" />
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light">
+      <a class="navbar-brand" href="/">Brain Tumor Segmentation</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarNav"
+        aria-controls="navbarNav"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item active">
+            <a class="nav-link" href="/">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/team">Team</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Contact Us</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">About Us</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <div class="container mt-5 content">
+      <h1>Brain Tumor Segmentation</h1>
+      <div class="row justify-content-center">
+        <div class="col-md-12 text-center">
+          <p>Please select a folder to upload:</p>
+        </div>
+        <div class="col-md-12 text-center">
+          <label for="folderInput" class="btn btn-secondary"
+            >Upload Folder</label
+          >
+          <input
+            type="file"
+            id="folderInput"
+            webkitdirectory
+            directory
+            multiple
+            class="form-control d-none"
+          />
+          <button id="uploadButton" class="btn btn-primary ml-2">
+            Convert
+          </button>
+          <button id="startAnalysisButton" class="btn btn-success ml-2">
+            Start Analysis
+          </button>
+        </div>
+      </div>
+      <div class="row mt-3">
+        <div class="col-md-12">
+          <p id="fileListMessage" class="d-none">
+            List of files inside the folder:
+          </p>
+          <ul id="fileList" class="list-group"></ul>
+        </div>
+      </div>
+
+      <!-- New Image Boxes Layout -->
+      <div class="row mt-5">
+        <div class="col-md-6">
+          <div class="image-box" id="originalImage1">Original Image 1</div>
+          <p class="text-center">Original Image 1</p>
+          <div class="image-box" id="originalImage2">Original Image 2</div>
+          <p class="text-center">Original Image 2</p>
+          <div class="image-box" id="originalImage3">Original Image 3</div>
+          <p class="text-center">Original Image 3</p>
+          <div class="image-box" id="originalImage4">Original Image 4</div>
+          <p class="text-center">Original Image 4</p>
+        </div>
+        <div class="col-md-6">
+          <div class="image-box" id="processedImage1">WIP</div>
+          <p class="text-center">Processed Image 1</p>
+          <div class="image-box" id="processedImage2">WIP</div>
+          <p class="text-center">Processed Image 2</p>
+          <div class="image-box" id="processedImage3">WIP</div>
+          <p class="text-center">Processed Image 3</p>
+          <div class="image-box" id="processedImage4">WIP</div>
+          <p class="text-center">Processed Image 4</p>
+        </div>
+      </div>
+
+      <!-- Existing Functionality -->
+      <div id="images" class="mt-3"></div>
+    </div>
+    <footer class="footer mt-auto py-3">
+      <div class="container">
+        <span
+          >©2024, team-medcam<br />Indian Institute of Technology Ropar</span
+        >
+      </div>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="/static/js/scripts.js"></script>
+  </body>
+</html>
