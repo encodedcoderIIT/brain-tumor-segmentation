@@ -1,0 +1,41 @@
+<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="200" cy="200" r="180" fill="#f0f0f0"/>
+  
+  <!-- Brain outline -->
+  <path d="M160 120 C140 120, 120 140, 120 170 C120 190, 130 210, 150 220
+           C140 230, 135 245, 135 260 C135 290, 155 310, 180 310
+           C195 310, 210 305, 220 295 C230 305, 245 310, 260 310
+           C285 310, 305 290, 305 260 C305 245, 300 230, 290 220
+           C310 210, 320 190, 320 170 C320 140, 300 120, 280 120
+           C270 120, 260 125, 250 135 C240 125, 230 120, 220 120
+           C210 120, 200 125, 190 135 C180 125, 170 120, 160 120"
+        fill="none" stroke="#2196F3" stroke-width="8"/>
+  
+  <!-- Neural network nodes -->
+  <circle cx="180" cy="180" r="15" fill="#FF4081"/>
+  <circle cx="260" cy="180" r="15" fill="#FF4081"/>
+  <circle cx="220" cy="240" r="15" fill="#FF4081"/>
+  
+  <!-- Neural network connections -->
+  <line x1="180" y1="180" x2="260" y2="180" stroke="#666" stroke-width="3"/>
+  <line x1="180" y1="180" x2="220" y2="240" stroke="#666" stroke-width="3"/>
+  <line x1="260" y1="180" x2="220" y2="240" stroke="#666" stroke-width="3"/>
+  
+  <!-- Scan lines effect -->
+  <line x1="120" y1="150" x2="320" y2="150" stroke="#4CAF50" stroke-width="2" opacity="0.5"/>
+  <line x1="120" y1="200" x2="320" y2="200" stroke="#4CAF50" stroke-width="2" opacity="0.5"/>
+  <line x1="120" y1="250" x2="320" y2="250" stroke="#4CAF50" stroke-width="2" opacity="0.5"/>
+  
+  <!-- Target/detection symbol -->
+  <circle cx="220" cy="240" r="25" fill="none" stroke="#F44336" stroke-width="3" opacity="0.7"/>
+  <circle cx="220" cy="240" r="20" fill="none" stroke="#F44336" stroke-width="2" opacity="0.7"/>
+  
+  <!-- Caption text -->
+  <text x="200" y="350" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold" font-size="24" fill="#333">
+    Brain Tumor Detection
+  </text>
+  <text x="200" y="375" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#666">
+    AI-Powered Analysis
+  </text>
+</svg>

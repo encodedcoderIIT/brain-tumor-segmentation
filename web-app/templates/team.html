@@ -1,61 +1,157 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Team</title>
-    <link
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <link href="/static/css/styles.css" rel="stylesheet" />
-  </head>
-  <body>
-    <nav class="navbar navbar-expand-lg navbar-light">
-      <a class="navbar-brand" href="/">Brain Tumor Segmentation</a>
-      <button
-        class="navbar-toggler"
-        type="button"
-        data-toggle="collapse"
-        data-target="#navbarNav"
-        aria-controls="navbarNav"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link" href="/">Home</a>
-          </li>
-          <li class="nav-item active">
-            <a class="nav-link" href="/team">Team</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Contact Us</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">About Us</a>
-          </li>
-        </ul>
-      </div>
-    </nav>
-    <div class="container mt-5 content">
-      <h1>Team</h1>
-      <p><strong>Data Scientist:</strong> Maninder Kaur (2023CSZ0015)</p>
-      <p><strong>ML Engineer:</strong> Amit Kumar (2023CSZ0012)</p>
-      <p><strong>Backend Engineer:</strong> Suresh (2024CSZ0009)</p>
-      <p><strong>Software Engineer:</strong> Nishchala Thakur (2024CSZ0005)</p>
-      <p><strong>Data Engineer:</strong> Anjani Gupta (2023CSZ0013)</p>
-    </div>
-    <footer class="footer mt-auto py-3">
-      <div class="container">
-        <span class="text-muted"
-          >©2024, encodedcoder (Suresh) and Team<br />Indian Institute of
-          Technology Ropar</span
+{% extends "base.html" %} {% block title %}Team{% endblock %} {% block content
+%}
+<h1>Our Dedicated Team</h1>
+<div class="card-container">
+  <div class="col-md-4 mb-4">
+    <div class="card shadow-sm h-100">
+      <img
+        src="/static/images/maninder.jpg"
+        class="card-img-top"
+        alt="Maninder Kaur"
+      />
+      <div class="card-body">
+        <h5 class="card-title">Maninder Kaur</h5>
+        <p class="card-text"><strong>Data Scientist</strong></p>
+        <p class="card-text">
+          Maninder specializes in data analysis and machine learning algorithms,
+          ensuring the accuracy and efficiency of our models.
+        </p>
+        <a
+          href="https://www.linkedin.com/in/maninder1705"
+          target="_blank"
+          class="btn btn-outline-primary"
         >
+          <i class="fab fa-linkedin"></i>
+        </a>
+        <a
+          href="https://github.com/Maninder-Kur"
+          target="_blank"
+          class="btn btn-outline-dark"
+        >
+          <i class="fab fa-github"></i>
+        </a>
       </div>
-    </footer>
-  </body>
-</html>
+    </div>
+  </div>
+  <div class="col-md-4 mb-4">
+    <div class="card shadow-sm h-100">
+      <img
+        src="/static/images/amit.jpg"
+        class="card-img-top"
+        alt="Amit Kumar"
+      />
+      <div class="card-body">
+        <h5 class="card-title">Amit Kumar</h5>
+        <p class="card-text"><strong>ML Engineer</strong></p>
+        <p class="card-text">
+          Amit is responsible for developing and optimizing machine learning
+          models, focusing on performance and scalability.
+        </p>
+        <a
+          href="https://www.linkedin.com/in/amit-kumar"
+          target="_blank"
+          class="btn btn-outline-primary"
+        >
+          <i class="fab fa-linkedin"></i>
+        </a>
+        <a
+          href="https://github.com/amit-kumar"
+          target="_blank"
+          class="btn btn-outline-dark"
+        >
+          <i class="fab fa-github"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4 mb-4">
+    <div class="card shadow-sm h-100">
+      <img src="/static/images/suresh.jpg" class="card-img-top" alt="Suresh" />
+      <div class="card-body">
+        <h5 class="card-title">Suresh</h5>
+        <p class="card-text"><strong>Backend Engineer</strong></p>
+        <p class="card-text">
+          Suresh focuses on developing and maintaining the front-end and
+          back-end components of our web application.
+        </p>
+        <a
+          href="https://www.linkedin.com/in/encodedcoder"
+          target="_blank"
+          class="btn btn-outline-primary"
+        >
+          <i class="fab fa-linkedin"></i>
+        </a>
+        <a
+          href="https://github.com/encodedcoder"
+          target="_blank"
+          class="btn btn-outline-dark"
+        >
+          <i class="fab fa-github"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4 mb-4">
+    <div class="card shadow-sm h-100">
+      <img
+        src="/static/images/nishchala.jpg"
+        class="card-img-top"
+        alt="Nishchala Thakur"
+      />
+      <div class="card-body">
+        <h5 class="card-title">Nishchala Thakur</h5>
+        <p class="card-text"><strong>Software Engineer</strong></p>
+        <p class="card-text">
+          Nishchala designed the software development life cycle, pipeline, and
+          monitoring.
+        </p>
+        <a
+          href="https://www.linkedin.com/in/nishchala-thakur"
+          target="_blank"
+          class="btn btn-outline-primary"
+        >
+          <i class="fab fa-linkedin"></i>
+        </a>
+        <a
+          href="https://github.com/nishchala-thakur"
+          target="_blank"
+          class="btn btn-outline-dark"
+        >
+          <i class="fab fa-github"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4 mb-4">
+    <div class="card shadow-sm h-100">
+      <img
+        src="/static/images/anjani.jpg"
+        class="card-img-top"
+        alt="Anjani Gupta"
+      />
+      <div class="card-body">
+        <h5 class="card-title">Anjani Gupta</h5>
+        <p class="card-text"><strong>Data Engineer</strong></p>
+        <p class="card-text">
+          Anjani is responsible for designing and implementing data pipelines,
+          ensuring data quality and availability for analysis.
+        </p>
+        <a
+          href="https://www.linkedin.com/in/anjani-gupta"
+          target="_blank"
+          class="btn btn-outline-primary"
+        >
+          <i class="fab fa-linkedin"></i>
+        </a>
+        <a
+          href="https://github.com/anjani-gupta"
+          target="_blank"
+          class="btn btn-outline-dark"
+        >
+          <i class="fab fa-github"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

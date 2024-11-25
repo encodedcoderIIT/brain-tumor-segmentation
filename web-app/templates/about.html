@@ -1,57 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>About Us</title>
-    <link
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <link href="/static/css/styles.css" rel="stylesheet" />
-  </head>
-  <body>
-    <nav class="navbar navbar-expand-lg navbar-light">
-      <a class="navbar-brand" href="/">Brain Tumor Segmentation</a>
-      <button
-        class="navbar-toggler"
-        type="button"
-        data-toggle="collapse"
-        data-target="#navbarNav"
-        aria-controls="navbarNav"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link" href="/">Home</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/team">Team</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/contact">Contact Us</a>
-          </li>
-          <li class="nav-item active">
-            <a class="nav-link" href="/about">About Us</a>
-          </li>
-        </ul>
-      </div>
-    </nav>
-    <div class="container mt-5 content">
-      <h1>About Us</h1>
-      <p>Coming soon (WIP)</p>
-    </div>
-    <footer class="footer mt-auto py-3">
-      <div class="container">
-        <span class="text-muted"
-          >©2024, encodedcoder (Suresh) and Team<br />Indian Institute of
-          Technology Ropar</span
-        >
-      </div>
-    </footer>
-  </body>
-</html>
+{% extends "base.html" %} {% block title %}About Us{% endblock %} {% block
+content %}
+<h1>About Us</h1>
+<div class="card">
+  <div class="card-body">
+    <h5 class="card-title">About Our Project</h5>
+    <p class="card-text">
+      Welcome to our web application for brain tumor segmentation. Our team is
+      dedicated to developing advanced machine learning models to assist in
+      medical imaging and diagnosis.
+    </p>
+    <p class="card-text">
+      Our mission is to leverage the power of artificial intelligence to improve
+      healthcare outcomes and provide accurate and efficient tools for medical
+      professionals.
+    </p>
+    <p class="card-text">
+      We are a team of passionate individuals from the Indian Institute of
+      Technology Ropar, working together to make a difference in the field of
+      medical technology.
+    </p>
+  </div>
+</div>
+{% endblock %}

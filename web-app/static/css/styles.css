@@ -48,3 +48,19 @@ body {
 .d-none {
   display: none;
 }
+
+.card:hover {
+  transform: scale(1.05);
+  transition: transform 0.3s;
+  cursor: pointer;
+}
+
+.card-container {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.card {
+  margin: 10px;
+}
