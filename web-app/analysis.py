@@ -1,113 +1,163 @@
+import base64
+import glob
 import matplotlib
+import matplotlib.pyplot as plt
+import nibabel as nib
+import numpy as np
+import os
+import pandas as pd
+import pickle
+import random
+import scipy
+import tarfile
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+from io import BytesIO
+from torch.utils.data import Dataset, DataLoader, Subset
+from torchvision import transforms
+from torchvision.transforms import functional
+
 matplotlib.use('Agg')  # Use the Agg backend for non-interactive plotting
 
-import numpy as np
-import cv2
-import nibabel as nib
-import matplotlib.pyplot as plt
-from io import BytesIO
-import base64
-from tensorflow.keras.models import load_model
-from tensorflow.keras.optimizers import Adam
+# Define the UNet model
+class DoubleConv(nn.Module):
+    """(convolution => [BN] => ReLU => Dropout) * 2"""
+    def __init__(self, in_channels, out_channels, mid_channels=None, dropout_prob=0.5):
+        super().__init__()
+        if not mid_channels:
+            mid_channels = out_channels
+        self.double_conv = nn.Sequential(
+            nn.Conv2d(in_channels, mid_channels, kernel_size=3, padding=1),
+            nn.BatchNorm2d(mid_channels),
+            nn.ReLU(inplace=True),
+            nn.Dropout(dropout_prob),
+            nn.Conv2d(mid_channels, out_channels, kernel_size=3, padding=1),
+            nn.BatchNorm2d(out_channels),
+            nn.ReLU(inplace=True),
+            nn.Dropout(dropout_prob)
+        )
 
-# dice loss as defined above for 4 classes
-def dice_coef(y_true, y_pred, smooth=1.0):
-    class_num = 4
-    for i in range(class_num):
-        y_true_f = K.flatten(y_true[:,:,:,i])
-        y_pred_f = K.flatten(y_pred[:,:,:,i])
-        intersection = K.sum(y_true_f * y_pred_f)
-        loss = ((2. * intersection + smooth) / (K.sum(y_true_f) + K.sum(y_pred_f) + smooth))
-        if i == 0:
-            total_loss = loss
-        else:
-            total_loss = total_loss + loss
-    total_loss = total_loss / class_num
-    return total_loss
+    def forward(self, x):
+        return self.double_conv(x)
 
-def dice_coef_necrotic(y_true, y_pred, epsilon=1e-6):
-    intersection = K.sum(K.abs(y_true[:,:,:,1] * y_pred[:,:,:,1]))
-    return (2. * intersection) / (K.sum(K.square(y_true[:,:,:,1])) + K.sum(K.square(y_pred[:,:,:,1])) + epsilon)
+class Down(nn.Module):
+    """Downscaling with maxpool then double conv"""
+    def __init__(self, in_channels, out_channels):
+        super().__init__()
+        self.maxpool_conv = nn.Sequential(
+            nn.MaxPool2d(2),
+            DoubleConv(in_channels, out_channels)
+        )
 
-def dice_coef_edema(y_true, y_pred, epsilon=1e-6):
-    intersection = K.sum(K.abs(y_true[:,:,:,2] * y_pred[:,:,:,2]))
-    return (2. * intersection) / (K.sum(K.square(y_true[:,:,:,2])) + K.sum(K.square(y_pred[:,:,:,2])) + epsilon)
+    def forward(self, x):
+        return self.maxpool_conv(x)
 
-def dice_coef_enhancing(y_true, y_pred, epsilon=1e-6):
-    intersection = K.sum(K.abs(y_true[:,:,:,3] * y_pred[:,:,:,3]))
-    return (2. * intersection) / (K.sum(K.square(y_true[:,:,:,3])) + K.sum(K.square(y_pred[:,:,:,3])) + epsilon)
+class Up(nn.Module):
+    """Upscaling then double conv"""
+    def __init__(self, in_channels, out_channels):
+        super().__init__()
+        self.up = nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True)
+        self.conv = DoubleConv(in_channels, out_channels, in_channels // 2)
 
-# Computing Precision
-def precision(y_true, y_pred):
-    true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
-    predicted_positives = K.sum(K.round(K.clip(y_pred, 0, 1)))
-    precision = true_positives / (predicted_positives + K.epsilon())
-    return precision
+    def forward(self, x1, x2):
+        x1 = self.up(x1)
+        diffY = x2.size()[2] - x1.size()[2]
+        diffX = x2.size()[3] - x1.size()[3]
+        x1 = F.pad(x1, [diffX // 2, diffX - diffX // 2, diffY // 2, diffY - diffY // 2])
+        x = torch.cat([x2, x1], dim=1)
+        return self.conv(x)
 
-# Computing Sensitivity
-def sensitivity(y_true, y_pred):
-    true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
-    possible_positives = K.sum(K.round(K.clip(y_true, 0, 1)))
-    return true_positives / (possible_positives + K.epsilon())
+class OutConv(nn.Module):
+    def __init__(self, in_channels, out_channels):
+        super(OutConv, self).__init__()
+        self.conv = nn.Conv2d(in_channels, out_channels, kernel_size=1)
 
-# Computing Specificity
-def specificity(y_true, y_pred):
-    true_negatives = K.sum(K.round(K.clip((1-y_true) * (1-y_pred), 0, 1)))
-    possible_negatives = K.sum(K.round(K.clip(1-y_true, 0, 1)))
-    return true_negatives / (possible_negatives + K.epsilon())
+    def forward(self, x):
+        return self.conv(x)
 
-# Load the model without the optimizer
-model = load_model(
-    'web-app/static/model/model_2024_2D_UNet.h5',
-    custom_objects={
-        'dice_coef': dice_coef,
-        'precision': precision,
-        'sensitivity': sensitivity,
-        'specificity': specificity,
-        'dice_coef_necrotic': dice_coef_necrotic,
-        'dice_coef_edema': dice_coef_edema,
-        'dice_coef_enhancing': dice_coef_enhancing
-    },
-    compile=False
-)
+class UNet(nn.Module):
+    def __init__(self, n_channels, n_classes, dropout_prob=0.5):
+        super(UNet, self).__init__()
+        self.inc = DoubleConv(n_channels, 64)
+        self.down1 = Down(64, 128)
+        self.down2 = Down(128, 256)
+        self.down3 = Down(256, 512)
+        self.down4 = Down(512, 512)
+        self.up1 = Up(1024, 256)
+        self.up2 = Up(512, 128)
+        self.up3 = Up(256, 64)
+        self.up4 = Up(128, 64)
+        self.outc = OutConv(64, n_classes)
 
-# Recompile the model with a compatible optimizer
-# model.compile(optimizer=Adam(), loss='binary_crossentropy', metrics=[dice_coef, precision, sensitivity, specificity, dice_coef_necrotic, dice_coef_edema, dice_coef_enhancing])
+    def forward(self, x):
+        x1 = self.inc(x)
+        x2 = self.down1(x1)
+        x3 = self.down2(x2)
+        x4 = self.down3(x3)
+        x5 = self.down4(x4)
+        x = self.up1(x5, x4)
+        x = self.up2(x, x3)
+        x = self.up3(x, x2)
+        x = self.up4(x, x1)
+        logits = self.outc(x)
+        return logits
 
-def analyze(images):
-    # Normalize the images
-    normalized_images = [(image - np.min(image)) / (np.max(image) - np.min(image)) for image in images]
 
-    # Load and process the images
-    slice_idx = normalized_images[0].shape[2] // 2  # Middle slice
+model = UNet(n_channels=1, n_classes=4)
+model.load_state_dict(torch.load('static/model/Amit_model_weights_t2f.pkl', map_location=torch.device('cpu'), weights_only=True))
+model.eval()
 
-    # Resize the images
-    IMG_SIZE = 128
-    resized_images = [cv2.resize(image[:, :, slice_idx], (IMG_SIZE, IMG_SIZE)) for image in normalized_images]
+def analyze(image):
+    # print(image)
+    # Assume `model` is your trained U-Net model
+    # Move the model to GPU if available, otherwise use CPU
+    device = torch.device('cpu')
+    # model.to(device)  # Move the model to the correct device
 
-    # Stack them together to create the multi-channel input
-    X_input = np.stack(resized_images, axis=-1)  # Shape will be (IMG_SIZE, IMG_SIZE, len(images))
+    # Load the image from the provided file
+    # img = nib.load(image)
+    print("***************************************************************")
+    # print(img)
+    data = image.get_fdata()
+    print(data.shape)
 
-    # Normalize the input
-    X_input = X_input / np.max(X_input)  # Normalizing the input to [0, 1]
+    # Select a 2D slice from the middle of the 3D image
+    slice_idx = data.shape[2] // 2  # Middle slice
+    t2ce_slice = data[:, :, slice_idx]
 
-    # If you need to add an extra batch dimension
-    X_input = np.expand_dims(X_input, axis=0)  # Shape will be (1, IMG_SIZE, IMG_SIZE, len(images))
+    # Convert the 2D slice to a tensor and add a batch dimension (shape: [1, 1, H, W])
+    input_tensor = torch.tensor(t2ce_slice, dtype=torch.float32).unsqueeze(0).unsqueeze(0)
 
-    # Make a prediction
-    prediction = model.predict(X_input)
+    # Move input tensor to the same device as the model
+    input_tensor = input_tensor.to(device)
 
-    # Process the prediction result
-    prediction = np.squeeze(prediction)
+    # Run the model to get the output (predicted mask)
+    with torch.no_grad():  # No gradient calculation needed for inference
+        output = model(input_tensor)  # Model output shape: [1, num_classes, H, W]
 
-    # Convert the prediction to a base64 string to return as JSON
+    # Assuming the output has multiple classes, use argmax to get the predicted class
+    segmentation_map = torch.argmax(output.squeeze(0), dim=0)  # Shape: [H, W]
+
+    # Convert the segmentation map to a NumPy array for visualization
+    segmentation_map = segmentation_map.cpu().numpy()  # Ensure it's on CPU
+
+    # Visualize the predicted mask overlay on the T2ce slice
     fig, ax = plt.subplots()
-    ax.imshow(np.argmax(prediction, axis=-1), cmap='jet')  # Take the channel with the max probability
+    ax.imshow(t2ce_slice.T, cmap='gray')  # Display the original image in grayscale
+    ax.imshow(segmentation_map.T, cmap='jet', alpha=0.5)  # Overlay the predicted mask with transparency (alpha)
+    # ax.set_title(f"Predicted Mask Overlay - Slice {slice_idx}")
+    ax.axis('off')  # Hide axis for cleaner view
+    plt.colorbar(ax.imshow(segmentation_map.T, cmap='jet', alpha=0.5))  # Color bar for segmentation
+
+    # Save the figure to a BytesIO object
     buf = BytesIO()
     plt.savefig(buf, format='png')
     buf.seek(0)
     img_base64 = base64.b64encode(buf.read()).decode('utf-8')
     plt.close()
+
+    # print(img_base64)
     return {'prediction': img_base64}
 
 

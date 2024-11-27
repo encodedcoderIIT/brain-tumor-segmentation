@@ -6,10 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
       fileList.innerHTML = "";
       const files = event.target.files;
       for (let i = 0; i < files.length; i++) {
-        if (
-          files[i].name.endsWith("t1c.nii.gz") ||
-          files[i].name.endsWith("t2f.nii.gz")
-        ) {
+        if (files[i].name.endsWith("t2f.nii.gz")) {
           const li = document.createElement("li");
           li.textContent = files[i].name;
           li.classList.add("list-group-item");
@@ -24,10 +21,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const files = document.getElementById("folderInput").files;
       const formData = new FormData();
       for (let i = 0; i < files.length; i++) {
-        if (
-          files[i].name.endsWith("t1c.nii.gz") ||
-          files[i].name.endsWith("t2f.nii.gz")
-        ) {
+        if (files[i].name.endsWith("t2f.nii.gz")) {
           formData.append("files", files[i]);
         }
       }
@@ -39,13 +33,13 @@ document.addEventListener("DOMContentLoaded", function () {
         .then((response) => response.json())
         .then((data) => {
           // Clear previous images
-          for (let i = 1; i <= 2; i++) {
+          for (let i = 1; i <= 1; i++) {
             document.getElementById(`originalImage${i}`).innerHTML = "";
           }
 
           // Display converted images in the original image boxes
           data.images.forEach((image, index) => {
-            if (index < 2) {
+            if (index < 1) {
               const img = document.createElement("img");
               img.src = `data:image/png;base64,${image}`;
               img.classList.add("img-fluid", "mt-3");
@@ -65,10 +59,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const formData = new FormData();
 
       for (let i = 0; i < files.length; i++) {
-        if (
-          files[i].name.endsWith("t1c.nii.gz") ||
-          files[i].name.endsWith("t2f.nii.gz")
-        ) {
+        if (files[i].name.endsWith("t2f.nii.gz")) {
           formData.append("files", files[i]);
         }
       }
@@ -79,16 +70,17 @@ document.addEventListener("DOMContentLoaded", function () {
       })
         .then((response) => response.json())
         .then((data) => {
-          const resultsContainer = document.getElementById("results");
-          resultsContainer.innerHTML = "";
+          // Clear previous images
+          for (let i = 1; i <= 1; i++) {
+            document.getElementById(`processedImage${i}`).innerHTML = "";
+          }
 
-          data.results.forEach((result, index) => {
-            const img = document.createElement("img");
-            img.src = "data:image/png;base64," + result.prediction;
-            img.alt = "Result " + (index + 1);
-            img.classList.add("img-fluid", "mb-3");
-            resultsContainer.appendChild(img);
-          });
+          // Display the returned image in the processed image box
+          const img = document.createElement("img");
+          img.src = `data:image/png;base64,${data.prediction}`;
+          img.classList.add("img-fluid", "mt-3");
+
+          document.getElementById("processedImage1").appendChild(img);
         })
         .catch((error) => console.error("Error:", error));
     });

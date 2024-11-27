@@ -48,22 +48,56 @@ def upload_files():
                 images.append(png_image)
     return jsonify({'images': images})
 
+
+# @app.route('/analyze', methods=['POST'])
+# def analyze_files():
+#     import tempfile
+#     if 'files' not in request.files:
+#         return "No file part", 400
+
+#     file = request.files['files']
+#     if file.filename == '':
+#         return "No selected file", 400
+
+#     if file:
+#         # Save the file to a temporary location
+#         temp_dir = tempfile.gettempdir()
+#         temp_path = os.path.join(temp_dir, file.filename)
+#         file.save(temp_path)
+
+#         # Load the file using nibabel
+#         img = nib.load(temp_path)
+
+#         # Perform your analysis here
+#         # ...
+
+#         return "File analyzed successfully", 200
+
 @app.route('/analyze', methods=['POST'])
 def analyze_files():
-    from analysis import analyze
-    files = request.files.getlist('files')
-    if len(files) < 2:
-        return "Missing files", 400
+    print("*****************", request.files)
+    import tempfile
+    file = request.files.getlist('files')[0]
+    print("##################", file)
+    temp_dir = tempfile.gettempdir()
+    temp_path = os.path.join(temp_dir, file.filename)
 
-    try:
-        # Load the images using nibabel
-        images = [nib.load(file).get_fdata() for file in files]
-    except Exception as e:
-        return f"Error loading images: {str(e)}", 400
+    print(temp_path)
+
+    # Ensure the directory exists
+    os.makedirs(os.path.dirname(temp_path), exist_ok=True)
+
+    # Save the file
+    file.save(temp_path)
+
+
+    img = nib.load(temp_path)
+    print("sdafdsfasdf", img)
 
     # Analyze the images
     try:
-        result_image = analyze(images)
+        from analysis import analyze
+        result_image = analyze(img)
     except Exception as e:
         return f"Error analyzing images: {str(e)}", 500
 

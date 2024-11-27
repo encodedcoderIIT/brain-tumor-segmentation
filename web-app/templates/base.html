@@ -4,15 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title %}My Web App{% endblock %}</title>
-    <link
-      rel="icon"
-      href="{{ url_for('static', filename='/images/favicon.png') }}"
-      type="image/png"
-    />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='/css/styles.css') }}"
-    />
+    <link rel="icon" href="/static/images/favicon.png" type="image/png" />
+    <link rel="stylesheet" href="/static/css/styles.css" />
     <link
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
       rel="stylesheet"
