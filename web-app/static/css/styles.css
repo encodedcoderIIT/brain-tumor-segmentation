@@ -16,6 +16,11 @@ body {
   flex: 1;
 }
 
+.nav-link:hover,
+.navbar-brand:hover {
+  color: #ffcc00 !important;
+}
+
 .navbar,
 .footer {
   background-color: #2479d3;
@@ -37,7 +42,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #dadada;
+  /* background-color: #dadada; */
 }
 
 .image-box img {
@@ -63,4 +68,14 @@ body {
 
 .card {
   margin: 10px;
+  transition: transform 0.3s; /* Add this line */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.page-header {
+  cursor: pointer;
+}
+
+.page-header:hover {
+  color: #2479d3;
 }

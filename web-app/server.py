@@ -1,17 +1,14 @@
+import matplotlib
+matplotlib.use('Agg')  # Use a non-interactive backend
 from flask import Flask, request, jsonify, render_template
 import os
 import gzip
-import nibabel as nib
-import numpy as np
-import matplotlib.pyplot as plt
-from io import BytesIO
 import base64
-# from tensorflow.keras.models import load_model
+from io import BytesIO
+import nibabel as nib
+import matplotlib.pyplot as plt
 
 app = Flask(__name__)
-
-# Load the model
-# model = load_model('static/model/3D-UNet-2018-weights-improvement-01-0.984.hdf5')
 
 @app.route('/')
 def index():
@@ -33,7 +30,15 @@ def about():
 def upload_files():
     files = request.files.getlist('files')
     images = []
-
+    def convert_nii_to_png(data):
+        slice_2d = data[:, :, data.shape[2] // 2]
+        plt.imshow(slice_2d, cmap='gray')
+        buf = BytesIO()
+        plt.savefig(buf, format='png')
+        buf.seek(0)
+        img_base64 = base64.b64encode(buf.read()).decode('utf-8')
+        plt.close()
+        return img_base64
     for file in files:
         if file.filename.endswith('.gz'):
             with gzip.open(file, 'rb') as f_in:
@@ -41,37 +46,28 @@ def upload_files():
                 data = nii_file.get_fdata()
                 png_image = convert_nii_to_png(data)
                 images.append(png_image)
-
     return jsonify({'images': images})
 
 @app.route('/analyze', methods=['POST'])
 def analyze_files():
+    from analysis import analyze
     files = request.files.getlist('files')
-    results = []
+    if len(files) < 2:
+        return "Missing files", 400
 
-    # for file in files:
-    #     if file.filename.endswith('.gz'):
-    #         with gzip.open(file, 'rb') as f_in:
-    #             nii_file = nib.Nifti1Image.from_bytes(f_in.read())
-    #             data = nii_file.get_fdata()
-    #             # Perform analysis using the model
-    #             prediction = model.predict(np.expand_dims(data, axis=0))
-    #             # Convert prediction to a displayable format
-    #             result_image = convert_nii_to_png(prediction[0])
-    #             results.append(result_image)
+    try:
+        # Load the images using nibabel
+        images = [nib.load(file).get_fdata() for file in files]
+    except Exception as e:
+        return f"Error loading images: {str(e)}", 400
 
-    return jsonify({'results': results})
+    # Analyze the images
+    try:
+        result_image = analyze(images)
+    except Exception as e:
+        return f"Error analyzing images: {str(e)}", 500
 
-def convert_nii_to_png(data):
-    slice_2d = data[:, :, data.shape[2] // 2]
-    plt.imshow(slice_2d, cmap='gray')
-    buf = BytesIO()
-    plt.savefig(buf, format='png')
-    buf.seek(0)
-    img_base64 = base64.b64encode(buf.read()).decode('utf-8')
-    plt.close()
-    return img_base64
+    return jsonify(result_image)
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 10000))
-    app.run(host='0.0.0.0', port=port, debug=False)
+    app.run(debug=False)

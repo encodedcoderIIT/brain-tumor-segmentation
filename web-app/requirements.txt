@@ -2,3 +2,4 @@ Flask
 nibabel
 numpy
 matplotlib
+tensorflow
